@@ -1,0 +1,47 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Service {
+  id                String            @id @default(cuid())
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  images            Json?
+  content           String?
+  title             String?
+  slug              String?
+  categoryService   CategoryService?  @relation(name: "CategoryServiceOnServices", fields: [categoryServiceId], references: [id])
+  categoryServiceId String?
+  categoryServices  CategoryService[] @relation(name: "CategoryServicesOnService")
+  price             Float?
+  discountPrice     Float?
+}
+
+model CategoryService {
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  title       String?
+  slug        String?
+  description String?
+  services    Service[] @relation(name: "CategoryServiceOnServices")
+  service     Service?  @relation(name: "CategoryServicesOnService", fields: [serviceId], references: [id])
+  serviceId   String?
+}
+
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  firstName String?
+  lastName  String?
+  username  String   @unique
+  email     String?  @unique
+  password  String
+  roles     Json
+}
